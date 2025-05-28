@@ -8,15 +8,17 @@ import joblib
 
 from src.classification import MLCategorizer
 
+def get_real_sample_data(n=10):
+    df = pd.read_excel(Path('data/inventory_data.xlsx'))
+    required = ['CatalogNo', 'Description', 'Main Category', 'Sub-category']
+    # Drop rows with missing or empty required fields
+    for col in required:
+        df = df[df[col].notna() & (df[col].astype(str).str.strip() != '')]
+    return df.head(n)
+
 @pytest.fixture
 def sample_data():
-    """Create sample data for testing."""
-    return pd.DataFrame({
-        "CatalogNo": ["SKU1", "SKU2", "SKU3"],
-        "Enriched Description": ["Item 1", "Item 2", "Item 3"],
-        "Main Category": ["Cat1", "Cat1", "Cat2"],
-        "Sub-category": ["Sub1", "Sub2", "Sub3"]
-    })
+    return get_real_sample_data(10)
 
 @pytest.fixture
 def ml_categorizer():
@@ -35,6 +37,8 @@ def test_validate_data(ml_categorizer):
     """Test data validation."""
     # Test valid data
     valid_data = pd.DataFrame({
+        "CatalogNo": ["SKU1", "SKU2"],
+        "Description": ["Desc 1", "Desc 2"],
         "Enriched Description": ["Item 1", "Item 2"],
         "Main Category": ["Cat1", "Cat2"],
         "Sub-category": ["Sub1", "Sub2"]
@@ -76,6 +80,8 @@ def test_prepare_features(ml_categorizer, sample_data):
     
     # Test invalid data
     invalid_data = pd.DataFrame({
+        "CatalogNo": ["SKU1"],
+        "Description": ["Desc 1"],
         "Enriched Description": ["Item 1"]
     })
     with pytest.raises(ValueError):

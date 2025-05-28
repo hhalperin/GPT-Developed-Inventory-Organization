@@ -40,7 +40,7 @@ def test_enrich_description(mock_post, gpt_client):
     mock_post.return_value = mock_response
     
     # Test enrichment
-    enriched = gpt_client.enrich_description("Test item")
+    enriched = gpt_client.enrich_description("TestNo", "TestMfr", "Test item")
     assert enriched == "Enhanced description"
     mock_post.assert_called_once()
 
@@ -86,7 +86,7 @@ def test_handle_api_error(mock_post, gpt_client):
     
     # Test error handling
     with pytest.raises(requests.RequestException):
-        gpt_client.enrich_description("Test item")
+        gpt_client.enrich_description("TestNo", "TestMfr", "Test item")
 
 @patch('requests.get')
 def test_get_usage_statistics(mock_get, gpt_client):

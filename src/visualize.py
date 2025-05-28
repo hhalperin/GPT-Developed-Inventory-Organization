@@ -35,6 +35,9 @@ class Visualizer:
             data: DataFrame containing inventory data.
             output_file: Path to save plot.
         """
+        if data.empty:
+            logger.warning("Data is empty, skipping category distribution plot.")
+            return
         # Get category counts
         category_counts = data[MAIN_CATEGORY_COL].value_counts()
         
@@ -59,6 +62,9 @@ class Visualizer:
             data: DataFrame containing inventory data.
             output_file: Path to save plot.
         """
+        if data.empty:
+            logger.warning("Data is empty, skipping cluster distribution plot.")
+            return
         if CLUSTER_COL not in data.columns:
             raise ValueError("No cluster assignments found in data")
             
@@ -85,6 +91,9 @@ class Visualizer:
             data: DataFrame containing inventory data.
             output_file: Path to save plot.
         """
+        if data.empty:
+            logger.warning("Data is empty, skipping category-cluster heatmap plot.")
+            return
         if CLUSTER_COL not in data.columns:
             raise ValueError("No cluster assignments found in data")
             
@@ -112,6 +121,11 @@ class Visualizer:
             similarity_matrix: Pre-computed similarity matrix.
             output_file: Path to save plot.
         """
+        if data.empty:
+            logger.warning("Data is empty, skipping similarity network plot.")
+            return
+        if similarity_matrix.shape[0] != len(data):
+            raise ValueError(f"Data length ({len(data)}) and similarity matrix shape {similarity_matrix.shape} do not match.")
         # Create graph
         G = nx.Graph()
         
@@ -168,6 +182,11 @@ class Visualizer:
             similarity_matrix: Pre-computed similarity matrix.
             output_file: Path to save plot.
         """
+        if data.empty:
+            logger.warning("Data is empty, skipping MDS visualization plot.")
+            return
+        if similarity_matrix.shape[0] != len(data):
+            raise ValueError(f"Data length ({len(data)}) and similarity matrix shape {similarity_matrix.shape} do not match.")
         # Compute MDS embedding
         mds = MDS(n_components=2, dissimilarity='precomputed', random_state=42)
         embedding = mds.fit_transform(1 - similarity_matrix)  # Convert similarity to distance
@@ -241,6 +260,9 @@ class Visualizer:
             output_file: Path to save plot.
             top_n: Number of top sub-categories to plot.
         """
+        if data.empty:
+            logger.warning("Data is empty, skipping top subcategory distribution plot.")
+            return
         try:
             subcat_counts = data[SUB_CATEGORY_COL].value_counts().head(top_n)
             plt.figure(figsize=(12, 6))
