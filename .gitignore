@@ -40,7 +40,6 @@ htmlcov/
 # Project specific
 # Environment variables
 .env
-.env.*
 
 # Keep raw data, ignore generated files
 data/raw/
